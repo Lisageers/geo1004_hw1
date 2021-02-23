@@ -7,6 +7,8 @@
 #include "Rows.h"
 #include "VoxelGrid.h"
 
+#include <math.h>
+
 float signed_volume(const Point &a, const Point &b, const Point &c, const Point &d) {
   // to do
 }
@@ -78,7 +80,31 @@ int main(int argc, const char * argv[]) {
   
   // Create grid
   Rows rows;
-  // to do
+  float maxx, maxy, maxz;
+  for (int i; i < vertices.size(); i++)
+  {
+      // update max x if found
+      if (vertices[i][0] > maxx)
+      {
+          maxx = vertices[i][0];
+      }
+      // update max y if found
+      if (vertices[i][1] > maxy)
+      {
+          maxy = vertices[i][1];
+      }
+      // update max z if found
+      if (vertices[i][2] > maxz)
+      {
+          maxz = vertices[i][2];
+      }
+  }
+  // calculate number of rows in each dimension
+  rows.x = ceil(maxx / voxel_size);
+  rows.y = ceil(maxy / voxel_size);
+  rows.z = ceil(maxz / voxel_size);
+
+  // use number of rows to make the grid
   VoxelGrid voxels(rows.x, rows.y, rows.z);
   
   // Voxelise
