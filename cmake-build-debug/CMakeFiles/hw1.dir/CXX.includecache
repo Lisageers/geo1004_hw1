@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/Vince/Documents/Geo1004/hw1/voxeliser/Point.h
+
+/Users/Vince/Documents/Geo1004/hw1/voxeliser/Rows.h
+
+/Users/Vince/Documents/Geo1004/hw1/voxeliser/VoxelGrid.h
+
+/Users/Vince/Documents/Geo1004/hw1/voxeliser/main.cpp
+iostream
+-
+fstream
+-
+vector
+-
+sstream
+-
+Point.h
+/Users/Vince/Documents/Geo1004/hw1/voxeliser/Point.h
+Rows.h
+/Users/Vince/Documents/Geo1004/hw1/voxeliser/Rows.h
+VoxelGrid.h
+/Users/Vince/Documents/Geo1004/hw1/voxeliser/VoxelGrid.h
+
