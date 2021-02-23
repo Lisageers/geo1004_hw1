@@ -21,41 +21,56 @@ int main(int argc, const char * argv[]) {
   float voxel_size = 1.0;
   
   // Read file
+  // initialise
   std::vector<Point> vertices;
   std::vector<std::vector<unsigned int>> faces;
   std::string line;
   float x, y, z;
 
+  // read lines
   std::ifstream input(file_in);
   while(std::getline(input, line))
   {
-//      std::cout << line[0] << "\n";
+      // if line starts with v
       if (line[0] == 'v')
       {
+          // split line at spaces
           std::istringstream ss(line);
+          // move to second element
           std::string word;
           ss >> word;
           ss >> word;
+          // create x with string converted to float
           x = std::stof(word);
+          // move one further to get y
           ss >> word;
           y = std::stof(word);
+          // move one further to get z
           ss >> word;
           z = std::stof(word);
+          // put vertex point in vector
           vertices.push_back(Point(x, y, z));
 
       }
+      // if line starts with f
       else if (line[0] == 'f')
       {
+          // split line at spaces
           std::istringstream ss(line);
+          // initialise
           std::string word;
           std::vector<unsigned int> current_face;
+          // move two to get first index
           ss >> word;
+          ss >> word;
+          // convert string to int, then put first index into vector
+          current_face.push_back(std::stoi(word));
+          // move to second index and to the same
           ss >> word;
           current_face.push_back(std::stoi(word));
           ss >> word;
           current_face.push_back(std::stoi(word));
-          ss >> word;
-          current_face.push_back(std::stoi(word));
+          // put vector in another vector
           faces.push_back(current_face);
       }
   }
