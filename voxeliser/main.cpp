@@ -10,11 +10,40 @@
 #include <math.h>
 
 float signed_volume(const Point &a, const Point &b, const Point &c, const Point &d) {
-  // to do
+    Point crossproduct = (b-d).cross((c-d));
+    float volume =  (a-d).dot(crossproduct) / 6;
+    return volume;
 }
 
 bool intersects(const Point &orig, const Point &dest, const Point &v0, const Point &v1, const Point &v2) {
-  // to do
+    float volume1 = signed_volume(v0, v1, v2, orig);
+    float volume2 = signed_volume(v0, v1, v2, dest);
+    if ((volume1 < 0 and volume2 < 0) or (volume1 > 0 and volume2 > 0))
+    {
+        return false;
+    }
+
+    float volume3 = signed_volume(orig, dest, v0, v1);
+    float volume4 = signed_volume(orig, dest, v0, v2);
+    if ((volume3 < 0 and volume4 < 0) or (volume3 > 0 and volume4 > 0))
+    {
+        return false;
+    }
+
+    float volume5 = signed_volume(orig, dest, v1, v0);
+    float volume6 = signed_volume(orig, dest, v1, v2);
+    if ((volume5 < 0 and volume6 < 0) or (volume5 > 0 and volume6 > 0))
+    {
+        return false;
+    }
+
+    float volume7 = signed_volume(orig, dest, v2, v0);
+    float volume8 = signed_volume(orig, dest, v2, v1);
+    if ((volume7 < 0 and volume8 < 0) or (volume7 > 0 and volume8 > 0))
+    {
+        return false;
+    }
+    return true;
 }
 
 int main(int argc, const char * argv[]) {
@@ -77,7 +106,7 @@ int main(int argc, const char * argv[]) {
       }
   }
   input.close();
-  
+
   // Create grid
   Rows rows;
   float maxx, maxy, maxz;
@@ -106,12 +135,55 @@ int main(int argc, const char * argv[]) {
 
   // use number of rows to make the grid
   VoxelGrid voxels(rows.x, rows.y, rows.z);
-  
+
+
   // Voxelise
-  for (auto const &triangle: faces) {
-    // to do
-  }
-  
+  // initialise lines
+  std::vector<Point> line1, line2, line3;
+
+//   loop through each voxel
+    for (int ziter = 0; ziter < rows.z; ziter++)
+    {
+        for (int yiter = 0; yiter < rows.y; yiter++)
+        {
+            for (int xiter = 0; xiter < rows.x; xiter++)
+            {
+                // create intersection targets
+                line1 = {Point(xiter, yiter+0.5, ziter+0.5), Point(xiter + 1, yiter + 0.5, ziter+0.5)};
+                line2 = {Point(xiter + 0.5, yiter, ziter+0.5), Point(xiter + 0.5, yiter + 1, ziter+0.5)};
+                line3 = {Point(xiter + 0.5, yiter + 0.5, ziter), Point(xiter + 0.5, yiter + 0.5, ziter+1)};
+
+                for (auto const &triangle: faces)
+                {
+                    if (intersects(line1[0], line1[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
+                    {
+                        voxels(xiter, yiter, ziter) = 1;
+                    }
+                    else if (intersects(line2[0], line2[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
+                    {
+                        voxels(xiter, yiter, ziter) = 1;
+                    }
+                    else if (intersects(line3[0], line3[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
+                    {
+                        voxels(xiter, yiter, ziter) = 1;
+                    }
+
+                }
+
+
+            }
+        }
+    }
+
+// for testing
+//    std::vector<Point> line1{Point(0, 0.5, 0.5), Point(1, 0.5, 0.5)};
+//    std::vector<Point> line2{Point(0.5, 0, 0.5), Point(0.5, 1, 0.5)};
+//    std::vector<Point> line3{Point(0.5, 0.5, 0), Point(0.5, 0.5, 1)};
+//    std::vector<Point> line4{Point(50, 50, 50), Point(51, 50, 50)};
+//    bool inter = intersects(line4[0], line4[1], Point(0.5, 0.5, 0), Point(0.5, 0.5, 1), Point(0.5, 1, 0.5));
+//    std::cout << inter;
+
+
   // Fill model
   // to do
   
