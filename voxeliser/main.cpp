@@ -51,7 +51,7 @@ bool intersects(const Point &orig, const Point &dest, const Point &v0, const Poi
 int main(int argc, const char * argv[]) {
   const char *file_in = "../bag_bk.obj";
   const char *file_out = "../vox.obj";
-  float voxel_size = 1.0;
+  float voxel_size = 1;
   float half_size = voxel_size/2;
   int boundary_voxels;
   
@@ -157,23 +157,14 @@ int main(int argc, const char * argv[]) {
   // use number of rows to make the grid
   VoxelGrid voxels(rows.x, rows.y, rows.z);
 
-    std::cout << rows.x << " rowsx\n";
-    std::cout << maxx << " diffx\n";
-    std::cout << rows.y << " rowsy\n";
-    std::cout << maxy << " diffy\n";
-    std::cout << rows.z << " rowsz\n";
-    std::cout << maxz << " diffz\n";
-
-
   // Voxelise
   // initialise
   std::vector<Point> line1, line2, line3;
   std::vector<float> xlist, ylist, zlist;
-int loopcounter2;
+
    // loop through triangles
   for (auto const &triangle: faces)
     {
-      loopcounter2++;
       int startx, endx, starty, endy, startz, endz;
         // creat lists with x, y and z values of the vertices
         xlist = {vertices[triangle[0]-1][0], vertices[triangle[1]-1][0], vertices[triangle[2]-1][0]};
@@ -214,10 +205,10 @@ int loopcounter2;
                     // check if triangle intersects any of the intersection targets, make voxel 1 if intersect
                     if (intersects(line1[0], line1[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
                     {
-                        voxels((xiter + startx), yiter, (ziter + startz)) = 1;
+                        voxels((xiter + startx), (yiter + starty), (ziter + startz)) = 1;
                         boundary_voxels++;
                     }
-                    else if (intersects(line2[0], line2[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
+                     if (intersects(line2[0], line2[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
                     {
                         voxels((xiter + startx), (yiter + starty), (ziter + startz)) = 1;
                         boundary_voxels++;
@@ -231,57 +222,48 @@ int loopcounter2;
             }
         }
     }
-    std::cout << loopcounter2 << " count\n";
-    std::cout << faces.size() << " count\n";
-// for testing
-//    std::vector<Point> line11{Point(0, 0.5, 0.5), Point(1, 0.5, 0.5)};
-//    std::vector<Point> line22{Point(0.5, 0, 0.5), Point(0.5, 1, 0.5)};
-//    std::vector<Point> line33{Point(0.5, 0.5, 0), Point(0.5, 0.5, 1)};
-//    std::vector<Point> line44{Point(50, 50, 50), Point(51, 50, 50)};
-//    bool inter = intersects(line11[0], line11[1], Point(0.5, 0.5, 0), Point(0.5, 0.5, 1), Point(0.5, 1, 0.5));
-//    std::cout << inter;
-
 
   // Fill model
-
     int exterior_voxels;
-    for (int i = 0; i < rows.x; i++) {
-        for (int j = 0; j < rows.y; j++) {
-            for (int k = rows.z-1; k >= 0; k--) {
-                if (voxels (i, j, k) != 1) {
+  // loop through voxels
+    for (int i = 0; i < rows.x; i++)
+    {
+        for (int j = 0; j < rows.y; j++)
+        {
+            for (int k = rows.z-1; k >= 0; k--)
+            {
+                // update voxel when not boundary
+                if (voxels (i, j, k) != 1)
+                {
                     voxels (i, j, k) = 2;
                     exterior_voxels ++;
                 }
-                else {
+                else
+                    {
                     break;
                 }
             }
         }
     }
 
+    // calculate volume
     int interior_voxels = voxels.voxels.size() - exterior_voxels - boundary_voxels;
     float volume = (boundary_voxels * pow(voxel_size, 3) * 0.5) + (interior_voxels * pow(voxel_size, 3));
     std::cout << "The volume is: " << volume;
-    std::cout << "bound: " << boundary_voxels;
-    std::cout << "interior: " << interior_voxels;
-
-    std::cout << voxels(1,1,1) << " rowsx\n";
-    std::cout << voxels(50,5,5) << " diffx\n";
-    std::cout << voxels(51,5,5) << " rowsy\n";
-    std::cout << voxels(52,5,5) << " diffy\n";
-    std::cout << voxels(53,5,5) << " rowsz\n";
-    std::cout << voxels(54,5,5) << " diffz\n";
 
     // Write voxels
     int linecounter = 0;
     float scale = voxel_size * 0.8;
     std::ofstream myfile(file_out);
+
+    // write vertices
     for (int zwrite = 0; zwrite < rows.z; zwrite++)
     {
         for (int ywrite = 0; ywrite < rows.y; ywrite++)
         {
             for (int xwrite = 0; xwrite < rows.x; xwrite++)
             {
+                // write if voxel boundary or interior
                 if (voxels(xwrite, ywrite, zwrite) == 0 or voxels(xwrite, ywrite, zwrite) == 1)
                 {
                     myfile << "v ";
@@ -336,8 +318,9 @@ int loopcounter2;
             }
         }
     }
-    std::cout << linecounter << " lines\n";
-    for (int i = 0; i < linecounter-1; i++)
+
+    // write faces
+    for (int i = 0; i < linecounter; i++)
     {
         myfile << "f ";
         myfile << i+1 << " ";
