@@ -249,7 +249,7 @@ int main(int argc, const char * argv[]) {
     // calculate volume
     int interior_voxels = voxels.voxels.size() - exterior_voxels - boundary_voxels;
     float volume = (boundary_voxels * pow(voxel_size, 3) * 0.5) + (interior_voxels * pow(voxel_size, 3));
-    std::cout << "The volume is: " << volume;
+    std::cout << "The volume is: " << volume << "\n";
 
     // Write voxels
     int linecounter = 0;
@@ -267,51 +267,51 @@ int main(int argc, const char * argv[]) {
                 if (voxels(xwrite, ywrite, zwrite) == 0 or voxels(xwrite, ywrite, zwrite) == 1)
                 {
                     myfile << "v ";
-                    myfile << xwrite + minx + (voxel_size- scale) << " ";
-                    myfile << ywrite + miny + (voxel_size- scale) << " ";
-                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
+                    myfile << xwrite * voxel_size + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite * voxel_size + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite * voxel_size + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + minx + scale << " ";
-                    myfile << ywrite + miny + (voxel_size- scale) << " ";
-                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
+                    myfile << xwrite * voxel_size + minx + scale << " ";
+                    myfile << ywrite * voxel_size + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite * voxel_size + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + minx + scale  << " ";
-                    myfile << ywrite + miny + scale  << " ";
-                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
+                    myfile << xwrite * voxel_size + minx + scale  << " ";
+                    myfile << ywrite * voxel_size + miny + scale  << " ";
+                    myfile << zwrite * voxel_size + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + minx + (voxel_size- scale) << " ";
-                    myfile << ywrite + miny + scale << " ";
-                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
+                    myfile << xwrite * voxel_size + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite * voxel_size + miny + scale << " ";
+                    myfile << zwrite * voxel_size + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + minx + (voxel_size- scale) << " ";
-                    myfile << ywrite + miny + (voxel_size- scale) << " ";
-                    myfile << zwrite + minz + scale << "\n";
+                    myfile << xwrite * voxel_size + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite * voxel_size + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite * voxel_size + minz + scale << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + minx + scale << " ";
-                    myfile << ywrite + miny + (voxel_size- scale) << " ";
-                    myfile << zwrite + minz + scale << "\n";
+                    myfile << xwrite * voxel_size + minx + scale << " ";
+                    myfile << ywrite * voxel_size + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite * voxel_size + minz + scale << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + minx + scale << " ";
-                    myfile << ywrite + miny + scale << " ";
-                    myfile << zwrite + minz + scale << "\n";
+                    myfile << xwrite * voxel_size + minx + scale << " ";
+                    myfile << ywrite * voxel_size + miny + scale << " ";
+                    myfile << zwrite * voxel_size + minz + scale << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + minx + (voxel_size- scale) << " ";
-                    myfile << ywrite + miny + scale << " ";
-                    myfile << zwrite + minz + scale << "\n";
+                    myfile << xwrite * voxel_size + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite * voxel_size + miny + scale << " ";
+                    myfile << zwrite * voxel_size + minz + scale << "\n";
                     linecounter++;
 
                 }
