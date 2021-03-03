@@ -49,9 +49,10 @@ bool intersects(const Point &orig, const Point &dest, const Point &v0, const Poi
 
 int main(int argc, const char * argv[]) {
   const char *file_in = "../bag_bk.obj";
-  const char *file_out = "vox.obj";
+  const char *file_out = "../vox.obj";
   float voxel_size = 1.0;
   float half_size = voxel_size/2;
+  int boundary_voxels;
   
   // Read file
   // initialise
@@ -203,14 +204,17 @@ int main(int argc, const char * argv[]) {
                     if (intersects(line1[0], line1[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
                     {
                         voxels((xiter + startx), yiter, (ziter + startz)) = 1;
+                        boundary_voxels++;
                     }
                     else if (intersects(line2[0], line2[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
                     {
                         voxels((xiter + startx), (yiter + starty), (ziter + startz)) = 1;
+                        boundary_voxels++;
                     }
                     else if (intersects(line3[0], line3[1], vertices[triangle[0]-1], vertices[triangle[1]-1], vertices[triangle[2]-1]))
                     {
                         voxels((xiter + startx), (yiter + starty), (ziter + startz)) = 1;
+                        boundary_voxels++;
                     }
                 }
             }
@@ -227,10 +231,134 @@ int main(int argc, const char * argv[]) {
 
 
   // Fill model
-  // to do
-  
-  // Write voxels
 
+    int exterior_voxels;
+    for (int i = 0; i < maxx; i++) {
+        for (int j = 0; j < maxy; j++) {
+            for (int k = maxz - 1; k >= 0; k--) {
+                if (voxels (i, j, k) != 1) {
+                    voxels (i, j, k) = 2;
+                    exterior_voxels ++;
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    }
+
+    int interior_voxels = voxels.voxels.size() - exterior_voxels - boundary_voxels;
+    float volume = (boundary_voxels * pow(voxel_size, 3) * 0.5) + (interior_voxels * pow(voxel_size, 3));
+    std::cout << "The volume is: " << volume;
+//    std::cout << "bound: " << boundary_voxels;
+//    std::cout << "interior: " << interior_voxels;
+//    std::cout << "total: " << voxels.voxels.size();
+
+    // Write voxels
+    int linecounter;
+    float scale = voxel_size * 0.8;
+    std::ofstream myfile(file_out);
+    for (int zwrite = 0; zwrite <= maxz; zwrite++)
+    {
+        for (int ywrite = 0; ywrite <= maxy; ywrite++)
+        {
+            for (int xwrite = 0; xwrite <= maxx; xwrite++)
+            {
+                if (voxels(xwrite, ywrite, zwrite) == 0 or voxels(xwrite, ywrite, zwrite) == 1)
+                {
+                    myfile << "v ";
+                    myfile << xwrite << " ";
+                    myfile << ywrite << " ";
+                    myfile << zwrite << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite + scale << " ";
+                    myfile << ywrite << " ";
+                    myfile << zwrite << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite + scale << " ";
+                    myfile << ywrite + scale << " ";
+                    myfile << zwrite << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite << " ";
+                    myfile << ywrite + scale << " ";
+                    myfile << zwrite << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite << " ";
+                    myfile << ywrite << " ";
+                    myfile << zwrite + scale << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite + scale << " ";
+                    myfile << ywrite << " ";
+                    myfile << zwrite + scale << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite + scale << " ";
+                    myfile << ywrite + scale << " ";
+                    myfile << zwrite + scale << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite << " ";
+                    myfile << ywrite + scale << " ";
+                    myfile << zwrite + scale << "\n";
+                    linecounter++;
+
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < linecounter-1; i++)
+    {
+        myfile << "f ";
+        myfile << i+1 << " ";
+        myfile << i+2 << " ";
+        myfile << i+3 << " ";
+        myfile << i+4 << "\n";
+
+        myfile << "f ";
+        myfile << i+1 << " ";
+        myfile << i+2 << " ";
+        myfile << i+6 << " ";
+        myfile << i+5 << "\n";
+
+        myfile << "f ";
+        myfile << i+5 << " ";
+        myfile << i+6 << " ";
+        myfile << i+7 << " ";
+        myfile << i+8 << "\n";
+
+        myfile << "f ";
+        myfile << i+4 << " ";
+        myfile << i+3 << " ";
+        myfile << i+7 << " ";
+        myfile << i+8 << "\n";
+
+        myfile << "f ";
+        myfile << i+1 << " ";
+        myfile << i+5 << " ";
+        myfile << i+8 << " ";
+        myfile << i+4 << "\n";
+
+        myfile << "f ";
+        myfile << i+2 << " ";
+        myfile << i+6 << " ";
+        myfile << i+7 << " ";
+        myfile << i+3 << "\n";
+
+        i = i + 7;
+    }
   
   return 0;
 }
