@@ -235,7 +235,7 @@ int main(int argc, const char * argv[]) {
     int exterior_voxels;
     for (int i = 0; i < maxx; i++) {
         for (int j = 0; j < maxy; j++) {
-            for (int k = maxz - 1; k >= 0; k--) {
+            for (int k = maxz; k >= 0; k--) {
                 if (voxels (i, j, k) != 1) {
                     voxels (i, j, k) = 2;
                     exterior_voxels ++;
@@ -252,7 +252,6 @@ int main(int argc, const char * argv[]) {
     std::cout << "The volume is: " << volume;
 //    std::cout << "bound: " << boundary_voxels;
 //    std::cout << "interior: " << interior_voxels;
-//    std::cout << "total: " << voxels.voxels.size();
 
     // Write voxels
     int linecounter;
@@ -267,38 +266,38 @@ int main(int argc, const char * argv[]) {
                 if (voxels(xwrite, ywrite, zwrite) == 0 or voxels(xwrite, ywrite, zwrite) == 1)
                 {
                     myfile << "v ";
-                    myfile << xwrite << " ";
-                    myfile << ywrite << " ";
-                    myfile << zwrite << "\n";
+                    myfile << xwrite + (voxel_size- scale) << " ";
+                    myfile << ywrite + (voxel_size- scale) << " ";
+                    myfile << zwrite + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
                     myfile << xwrite + scale << " ";
-                    myfile << ywrite << " ";
-                    myfile << zwrite << "\n";
+                    myfile << ywrite + (voxel_size- scale) << " ";
+                    myfile << zwrite + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + scale << " ";
+                    myfile << xwrite + scale + (voxel_size- scale) << " ";
+                    myfile << ywrite + scale + (voxel_size- scale) << " ";
+                    myfile << zwrite + (voxel_size- scale) << "\n";
+                    linecounter++;
+
+                    myfile << "v ";
+                    myfile << xwrite + (voxel_size- scale) << " ";
                     myfile << ywrite + scale << " ";
-                    myfile << zwrite << "\n";
+                    myfile << zwrite + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite << " ";
-                    myfile << ywrite + scale << " ";
-                    myfile << zwrite << "\n";
-                    linecounter++;
-
-                    myfile << "v ";
-                    myfile << xwrite << " ";
-                    myfile << ywrite << " ";
+                    myfile << xwrite + (voxel_size- scale) << " ";
+                    myfile << ywrite + (voxel_size- scale) << " ";
                     myfile << zwrite + scale << "\n";
                     linecounter++;
 
                     myfile << "v ";
                     myfile << xwrite + scale << " ";
-                    myfile << ywrite << " ";
+                    myfile << ywrite + (voxel_size- scale) << " ";
                     myfile << zwrite + scale << "\n";
                     linecounter++;
 
@@ -309,7 +308,7 @@ int main(int argc, const char * argv[]) {
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite << " ";
+                    myfile << xwrite + (voxel_size- scale) << " ";
                     myfile << ywrite + scale << " ";
                     myfile << zwrite + scale << "\n";
                     linecounter++;
