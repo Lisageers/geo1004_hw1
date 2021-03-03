@@ -44,6 +44,7 @@ bool intersects(const Point &orig, const Point &dest, const Point &v0, const Poi
     {
         return false;
     }
+
     return true;
 }
 
@@ -107,8 +108,10 @@ int main(int argc, const char * argv[]) {
           // put vector in another vector
           faces.push_back(current_face);
       }
+
   }
   input.close();
+
 
   // Create grid
   Rows rows;
@@ -154,16 +157,24 @@ int main(int argc, const char * argv[]) {
   // use number of rows to make the grid
   VoxelGrid voxels(rows.x, rows.y, rows.z);
 
+    std::cout << rows.x << " rowsx\n";
+    std::cout << maxx << " diffx\n";
+    std::cout << rows.y << " rowsy\n";
+    std::cout << maxy << " diffy\n";
+    std::cout << rows.z << " rowsz\n";
+    std::cout << maxz << " diffz\n";
+
 
   // Voxelise
   // initialise
   std::vector<Point> line1, line2, line3;
   std::vector<float> xlist, ylist, zlist;
-
+int loopcounter2;
    // loop through triangles
   for (auto const &triangle: faces)
     {
-        int startx, endx, starty, endy, startz, endz;
+      loopcounter2++;
+      int startx, endx, starty, endy, startz, endz;
         // creat lists with x, y and z values of the vertices
         xlist = {vertices[triangle[0]-1][0], vertices[triangle[1]-1][0], vertices[triangle[2]-1][0]};
         ylist = {vertices[triangle[0]-1][1], vertices[triangle[1]-1][1], vertices[triangle[2]-1][1]};
@@ -220,7 +231,8 @@ int main(int argc, const char * argv[]) {
             }
         }
     }
-
+    std::cout << loopcounter2 << " count\n";
+    std::cout << faces.size() << " count\n";
 // for testing
 //    std::vector<Point> line11{Point(0, 0.5, 0.5), Point(1, 0.5, 0.5)};
 //    std::vector<Point> line22{Point(0.5, 0, 0.5), Point(0.5, 1, 0.5)};
@@ -233,9 +245,9 @@ int main(int argc, const char * argv[]) {
   // Fill model
 
     int exterior_voxels;
-    for (int i = 0; i < maxx; i++) {
-        for (int j = 0; j < maxy; j++) {
-            for (int k = maxz; k >= 0; k--) {
+    for (int i = 0; i < rows.x; i++) {
+        for (int j = 0; j < rows.y; j++) {
+            for (int k = rows.z-1; k >= 0; k--) {
                 if (voxels (i, j, k) != 1) {
                     voxels (i, j, k) = 2;
                     exterior_voxels ++;
@@ -250,74 +262,81 @@ int main(int argc, const char * argv[]) {
     int interior_voxels = voxels.voxels.size() - exterior_voxels - boundary_voxels;
     float volume = (boundary_voxels * pow(voxel_size, 3) * 0.5) + (interior_voxels * pow(voxel_size, 3));
     std::cout << "The volume is: " << volume;
-//    std::cout << "bound: " << boundary_voxels;
-//    std::cout << "interior: " << interior_voxels;
+    std::cout << "bound: " << boundary_voxels;
+    std::cout << "interior: " << interior_voxels;
+
+    std::cout << voxels(1,1,1) << " rowsx\n";
+    std::cout << voxels(50,5,5) << " diffx\n";
+    std::cout << voxels(51,5,5) << " rowsy\n";
+    std::cout << voxels(52,5,5) << " diffy\n";
+    std::cout << voxels(53,5,5) << " rowsz\n";
+    std::cout << voxels(54,5,5) << " diffz\n";
 
     // Write voxels
-    int linecounter;
+    int linecounter = 0;
     float scale = voxel_size * 0.8;
     std::ofstream myfile(file_out);
-    for (int zwrite = 0; zwrite <= maxz; zwrite++)
+    for (int zwrite = 0; zwrite < rows.z; zwrite++)
     {
-        for (int ywrite = 0; ywrite <= maxy; ywrite++)
+        for (int ywrite = 0; ywrite < rows.y; ywrite++)
         {
-            for (int xwrite = 0; xwrite <= maxx; xwrite++)
+            for (int xwrite = 0; xwrite < rows.x; xwrite++)
             {
                 if (voxels(xwrite, ywrite, zwrite) == 0 or voxels(xwrite, ywrite, zwrite) == 1)
                 {
                     myfile << "v ";
-                    myfile << xwrite + (voxel_size- scale) << " ";
-                    myfile << ywrite + (voxel_size- scale) << " ";
-                    myfile << zwrite + (voxel_size- scale) << "\n";
+                    myfile << xwrite + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + scale << " ";
-                    myfile << ywrite + (voxel_size- scale) << " ";
-                    myfile << zwrite + (voxel_size- scale) << "\n";
+                    myfile << xwrite + minx + scale << " ";
+                    myfile << ywrite + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + scale + (voxel_size- scale) << " ";
-                    myfile << ywrite + scale + (voxel_size- scale) << " ";
-                    myfile << zwrite + (voxel_size- scale) << "\n";
+                    myfile << xwrite + minx + scale  << " ";
+                    myfile << ywrite + miny + scale  << " ";
+                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + (voxel_size- scale) << " ";
-                    myfile << ywrite + scale << " ";
-                    myfile << zwrite + (voxel_size- scale) << "\n";
+                    myfile << xwrite + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite + miny + scale << " ";
+                    myfile << zwrite + minz + (voxel_size- scale) << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + (voxel_size- scale) << " ";
-                    myfile << ywrite + (voxel_size- scale) << " ";
-                    myfile << zwrite + scale << "\n";
+                    myfile << xwrite + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite + minz + scale << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + scale << " ";
-                    myfile << ywrite + (voxel_size- scale) << " ";
-                    myfile << zwrite + scale << "\n";
+                    myfile << xwrite + minx + scale << " ";
+                    myfile << ywrite + miny + (voxel_size- scale) << " ";
+                    myfile << zwrite + minz + scale << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + scale << " ";
-                    myfile << ywrite + scale << " ";
-                    myfile << zwrite + scale << "\n";
+                    myfile << xwrite + minx + scale << " ";
+                    myfile << ywrite + miny + scale << " ";
+                    myfile << zwrite + minz + scale << "\n";
                     linecounter++;
 
                     myfile << "v ";
-                    myfile << xwrite + (voxel_size- scale) << " ";
-                    myfile << ywrite + scale << " ";
-                    myfile << zwrite + scale << "\n";
+                    myfile << xwrite + minx + (voxel_size- scale) << " ";
+                    myfile << ywrite + miny + scale << " ";
+                    myfile << zwrite + minz + scale << "\n";
                     linecounter++;
 
                 }
             }
         }
     }
-
+    std::cout << linecounter << " lines\n";
     for (int i = 0; i < linecounter-1; i++)
     {
         myfile << "f ";
